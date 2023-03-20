@@ -36,7 +36,7 @@ input:focus {
   border-color: #311c24
 }
 
-button {
+.search-button {
   border: none;
   height: 42px;
   width: 42px;
@@ -46,7 +46,7 @@ button {
   cursor: pointer;
   background: transparent;
 }
-button:before {
+.search-button:before {
   content: "";
   /* content: "\f00e";
   font-family: FontAwesome; */
@@ -64,4 +64,6 @@ background-image: url("../img/search.svg");
   padding: 20px;
   margin: 0;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.4);
+  position: sticky;
+  top: 0;
 }
