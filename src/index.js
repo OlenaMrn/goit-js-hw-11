@@ -2,9 +2,9 @@ import './css/styles.css';
 import axios from 'axios';
 
 const refs = {
-    searchForm: document.querySelector('.search-form'),
-    galleryContainer: document.querySelector('.gallery'),
-    
+  searchForm: document.querySelector('.search-form'),
+  galleryContainer: document.querySelector('.gallery'),
+  loadMoreButton: document.querySelector('.load-more'),
 };
 
 refs.searchForm.addEventListener('submit', onSearch);

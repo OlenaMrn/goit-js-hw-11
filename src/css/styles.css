@@ -67,3 +67,21 @@ background-image: url("../img/search.svg");
   position: sticky;
   top: 0;
 }
+
+.load-more {
+  border: none;
+  height: 42px;
+  min-width:200px;
+  /* position: absolute;
+  top: 0;
+  right: 0; */
+  cursor: pointer;
+  background-color: #683B4D;
+  font-size: 16px;
+  color: white;
+  border-radius: 5px;
+ display: block;
+  margin: 40px auto;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4);
+}
+
