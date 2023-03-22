@@ -1,6 +1,8 @@
 import './css/styles.css';
 
 // бібліотеки
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 // import SimpleLightbox from 'simplelightbox';
 // import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -35,7 +37,9 @@ function onSearch(e) {
   pixApiService.query = e.currentTarget.elements.searchQuery.value;
 
   if (pixApiService.query === '') {
-    return alert('type something');
+    return Notify.info(
+      'Type something for search.'
+    );
   }
 
   pixApiService.resetPage();
@@ -48,10 +52,20 @@ function onSearch(e) {
 function fetchImages() {
   loadMoreBtn.disable();
   pixApiService.fetchPictures().then(hits => {
+    if (hits.length === 0) {
+      throw new Error('Images not found');
+    }
     appendGalleryMarkup(hits);
+    loadMoreBtn.enable();
+  }).catch(error => {
+    // console.error(error);
+    Notify.warning(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
     loadMoreBtn.enable();
   });
 }
+
 
 function appendGalleryMarkup(hits) {
   refs.galleryContainer.insertAdjacentHTML(
