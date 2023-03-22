@@ -131,3 +131,7 @@ background-image: url("../img/search.svg");
 .info-item:not(:last-child) {
   margin-right: 5px;
 }
+
+.is-hidden {
+  display: none;
+}

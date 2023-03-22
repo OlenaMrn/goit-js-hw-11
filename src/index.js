@@ -5,16 +5,24 @@ import './css/styles.css';
 // import 'simplelightbox/dist/simple-lightbox.min.css';
 
 // клас
-import PixApiService from './pix-api-service.js';
+import PixApiService from './pix-api-service';
+import LoadMoreBtn from './loadMoreBtn';
 
 const refs = {
   searchForm: document.querySelector('.search-form'),
   galleryContainer: document.querySelector('.gallery'),
-  loadMoreBtn: document.querySelector('.load-more'),
+  //   loadMoreBtn: document.querySelector('.load-more'),
 };
 
 refs.searchForm.addEventListener('submit', onSearch);
-refs.loadMoreBtn.addEventListener('click', onLoadMore);
+// refs.loadMoreBtn.addEventListener('click', onLoadMore);
+
+const loadMoreBtn = new LoadMoreBtn({
+  selector: '.load-more',
+  hidden: true,
+});
+
+loadMoreBtn.refs.button.addEventListener('click', fetchImages);
 
 const pixApiService = new PixApiService();
 
@@ -22,14 +30,27 @@ let searchQuery = '';
 
 function onSearch(e) {
   e.preventDefault();
+  clearGalleryContainer();
 
   pixApiService.query = e.currentTarget.elements.searchQuery.value;
+
+  if (pixApiService.query === '') {
+    return alert('type something');
+  }
+
   pixApiService.resetPage();
-  pixApiService.fetchPictures().then(appendGalleryMarkup);
+
+  loadMoreBtn.show();
+
+  fetchImages();
 }
 
-function onLoadMore() {
-  pixApiService.fetchPictures(searchQuery).then(appendGalleryMarkup);
+function fetchImages() {
+  loadMoreBtn.disable();
+  pixApiService.fetchPictures().then(hits => {
+    appendGalleryMarkup(hits);
+    loadMoreBtn.enable();
+  });
 }
 
 function appendGalleryMarkup(hits) {
@@ -64,8 +85,12 @@ function createGalleryCardsMarkup(hits) {
     .join('');
 }
 
-const lightbox = new SimpleLightbox('.gallery', {
-  captionDelay: 250,
-  captionsData: 'alt',
-  enableKeyboard: true,
-});
+// const lightbox = new SimpleLightbox('.gallery', {
+//   captionDelay: 250,
+//   captionsData: 'alt',
+//   enableKeyboard: true,
+// });
+
+function clearGalleryContainer() {
+  refs.galleryContainer.innerHTML = '';
+}
