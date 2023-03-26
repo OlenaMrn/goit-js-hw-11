@@ -23,12 +23,15 @@ export default class PixApiService {
     const response = await axios.get('https://pixabay.com/api/', { params });
     const { data } = response;
     this.page += 1;
+    this.hits = data.totalHits;
     return data.hits;
   }
 
   resetPage() {
     this.page = 1;
   }
+
+  
 
   get query() {
     return this.searchQuery;
@@ -45,4 +48,13 @@ export default class PixApiService {
   set hits(newTotalHits) {
     this.totalHits = newTotalHits;
   }
+
+  setTotal(total) {
+    return (this.totalPages = total);
+  }
+
+  resetTotalPage() {
+    return (this.totalPages = 0);
+  }
 }
+
