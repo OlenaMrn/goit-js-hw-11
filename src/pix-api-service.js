@@ -7,6 +7,8 @@ export default class PixApiService {
     this.searchQuery = '';
     this.page = 1;
     this.totalHits = 0;
+    this.perPage = 40;
+    
   }
 
   async fetchPictures() {
@@ -49,12 +51,12 @@ export default class PixApiService {
     this.totalHits = newTotalHits;
   }
 
-  setTotal(total) {
-    return (this.totalPages = total);
-  }
+  // setTotal(total) {
+  //   return (this.totalPages = total);
+  // }
 
-  resetTotalPage() {
-    return (this.totalPages = 0);
-  }
+  // resetTotalPage() {
+  //   return (this.totalPages = 0);
+  // }
 }
 

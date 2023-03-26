@@ -3,8 +3,8 @@ import './css/styles.css';
 // бібліотеки
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-// import SimpleLightbox from 'simplelightbox';
-// import 'simplelightbox/dist/simple-lightbox.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 // клас
 import PixApiService from './pix-api-service';
@@ -18,13 +18,12 @@ const refs = {
 
 refs.searchForm.addEventListener('submit', onSearch);
 
-
 const loadMoreBtn = new LoadMoreBtn({
   selector: '.load-more',
   hidden: true,
 });
 
-loadMoreBtn.refs.button.addEventListener('click', onLoadMore);
+loadMoreBtn.refs.button.addEventListener('click', fetchGallery);
 
 const pixApiService = new PixApiService();
 
@@ -41,45 +40,11 @@ function onSearch(e) {
   if (pixApiService.query === '') {
     return Notify.info('Type something for search.');
   }
- 
+
   pixApiService.resetPage();
 
   fetchGallery();
 }
-
-
-
-// function fetchGallery() {
-//   loadMoreBtn.disable();
-//   pixApiService
-//     .fetchPictures()
-//     .then(response => {
-
-//       console.log(response.totalHits);
-//       // const totalHits = response.totalHits;
-//       // const currentHits = response.hits.length;
-
-//       loadMoreBtn.show();
-//       appendGalleryMarkup(response);
-//       loadMoreBtn.enable();
-
-//       if (totalHits === currentHits) {
-//         loadMoreBtn.hide();
-//         Notify.info("We're sorry, but you've reached the end of search results.");
-//       }
-//     })
-//     .catch(error => {
-//       const message = error.status === 404 ? 'Images not found' : 'An error occurred. Please try again.';
-//       Notify.warning(message);
-//       loadMoreBtn.disable();
-//     });
-// }
-
-
-
-
-
-
 
 
 
@@ -88,47 +53,51 @@ function fetchGallery() {
   pixApiService
     .fetchPictures()
     .then(hits => {
+      const totalResult = pixApiService.totalHits;
+      // console.log(totalResult);
 
-     
-      const totalResult = pixApiService.hits;
-      console.log(totalResult);
-      
-
-      if (totalResult === 0 && hits.length === 0) {
-        throw new Error('Images not found');
+      if (totalResult === 0) {
+        Notify.warning(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        loadMoreBtn.disable();
+        return;
       }
 
-      if (!hits.length) {
-        loadMoreBtn.hide();
-        Notify.info("Wea re sorry, but you've reached the end of search results.");
-        return;
-      }  
+      const currentPage = pixApiService.page - 1;
+      // console.log(currentPage);
+
+      // if (!hits.length) {
+      //   loadMoreBtn.hide();
+      //   Notify.info(
+      //     "We are sorry, but you've reached the end of search results."
+      //   );
+      //   return;
+      // }
+
+      if (currentPage === 1) {
+        Notify.success(`Hooray! We found ${totalResult} images.`);
+      }
 
       loadMoreBtn.show();
       appendGalleryMarkup(hits);
       loadMoreBtn.enable();
-     
-    }
-  
-  
-  )
+
+      const lastPage = Math.ceil(totalResult / pixApiService.perPage);
+      // console.log(pixApiService.perPage);
+      // console.log(lastPage);
+
+      if (currentPage === lastPage) {
+        Notify.success(
+          "We are sorry, but you've reached the end of search results."
+        );
+        loadMoreBtn.hide();
+      }
+    })
     .catch(error => {
-      Notify.warning(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
+      Notify.warning('Sorry,something went wrong with your search!');
       loadMoreBtn.disable();
     });
-}
-
-
-
-
-
- 
-
-
-function onLoadMore() {
-  fetchGallery();
 }
 
 function appendGalleryMarkup(hits) {
@@ -136,12 +105,14 @@ function appendGalleryMarkup(hits) {
     'beforeend',
     createGalleryCardsMarkup(hits)
   );
+
+    lightbox.refresh();
 }
 
 function createGalleryCardsMarkup(hits) {
   return hits
     .map(
-      hit => `
+      hit => `<a class = "gallery-item" href = "${hit.largeImageURL}">
       <div class="photo-card">
         <img src="${hit.webformatURL}" alt="${hit.tags}" loading="lazy" />
         <div class="info">
@@ -158,16 +129,16 @@ function createGalleryCardsMarkup(hits) {
             <b>Downloads ${hit.downloads}</b>
           </p>
         </div>
-      </div>`
+      </div></a>`
     )
     .join('');
 }
 
-// const lightbox = new SimpleLightbox('.gallery', {
-//   captionDelay: 250,
-//   captionsData: 'alt',
-//   enableKeyboard: true,
-// });
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: `alt`,
+  captionDelay: 250,
+});
+
 
 function clearGalleryContainer() {
   refs.galleryContainer.innerHTML = '';
