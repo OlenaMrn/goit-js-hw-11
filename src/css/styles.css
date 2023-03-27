@@ -11,6 +11,8 @@ html {
 p,
 body {
   margin: 0;
+ 
+  
 }
 
 a {
@@ -49,9 +51,7 @@ input:focus {
 }
 .search-button:before {
   content: "";
-  /* content: "\f00e";
-  font-family: FontAwesome; */
-  font-size: 16px;
+   font-size: 16px;
    display: inline-block;
   width: 20px;
   height: 20px;
@@ -103,6 +103,7 @@ background-image: url("../img/search.svg");
   margin-bottom: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  
 }
 
 .photo-card img {
@@ -117,7 +118,7 @@ background-image: url("../img/search.svg");
   bottom: 0;
   left: 0;
   right: 0;
-  background-color:rgba(104, 59, 77, 0.6);
+  background-color:#683B4D;
   color: #fff;
   padding: 10px;
 }
